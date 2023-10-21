@@ -1,0 +1,7 @@
+checkpoints*
+logs*
+local_scripts
+test_output
+*__pycache__*
+*.onnx
+*.engine
