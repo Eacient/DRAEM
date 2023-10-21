@@ -1,0 +1,15 @@
+python train_draem_gray.py \
+    --root_dir /home/zhougaowei/datasets/xray/mvtec/bubbles1k \
+    --mode ms \
+    --mean 0.9204377  0.8543714  0.76560506 0.70656047 0.64964986 \
+    --std 0.24307425 0.28312342 0.34987381 0.40316393 0.42631796 \
+    --resume 8 \
+    --vis_max 10000 \
+    --bs 1 \
+    --lr 0.0001 \
+    --epochs 200 \
+    --anomaly_source_path /home/zhougaowei/datasets/dtd/images \
+    --checkpoint_path /home/zhougaowei/DRAEM/checkpoints \
+    --log_path /home/zhougaowei/DRAEM/logs \
+    --visualize \
+    --gpu_id 0
