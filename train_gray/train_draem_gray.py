@@ -159,7 +159,7 @@ def train_on_device(obj_name, args):
         if (n_iter+1) % args.epoch_size == 0:
             scheduler.step()
 
-        if (n_iter+1) % 1000 == 0:
+        if (n_iter+1) % 10000 == 0:
             torch.save(model.state_dict(), model_path)
             torch.save(model_seg.state_dict(), model_seg_path)
             torch.save(optimizer.state_dict(), optimizer_path)

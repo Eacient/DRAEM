@@ -194,13 +194,17 @@ if __name__ == "__main__":
     # dataset.calculate_mean_std()
     # mean=[0.50729982] std=[0.41779612]
 
-    # dataset = MVTecDRAEMTrainDatasetGray('/home/caoxiatian/data/xray/mvtec/fish_bubbles1k', '/home/caoxiatian/data/dtd/images', mode='ms')
-    # dataset.calculate_mean_std()
+    dataset = MVTecDRAEMTrainDatasetGray('/home/caoxiatian/data/xray/mvtec/cans1k', '/home/caoxiatian/data/dtd/images', mode='ms')
+    dataset.calculate_mean_std()
+    # cans
+    # mean=[0.92999164 0.92114223 0.87338056 0.77245481 0.68129424 0.62310743 0.59162714 0.56702109] 
+    # std=[0.23246168 0.25565838 0.27783108 0.33360298 0.39201077 0.43525531 0.46304083 0.47232256]
     # mean = [0.99310124 0.9728329  0.94237832 0.90898088 0.83903737 0.74311205 0.60096486 0.50729982]
     # std = [0.05002454 0.1179261  0.18425917 0.24282377 0.29716158 0.34985626 0.38834061 0.41779612]
 
-    dataset = MVTecDRAEMTrainDatasetGray('/home/caoxiatian/data/xray/mvtec/fish_bubbles1k', '/home/caoxiatian/data/dtd/images', mode='sw')
-    dataset.calculate_mean_std()
+
+    # dataset = MVTecDRAEMTrainDatasetGray('/home/caoxiatian/data/xray/mvtec/fish_bubbles1k', '/home/caoxiatian/data/dtd/images', mode='sw')
+    # dataset.calculate_mean_std()
     # mean=[0.99310124 0.96397182 0.92547368 0.88770151 0.80459293 0.68782326 0.52160943 0.42869957]
     # std=[0.05002454 0.15590053 0.2362465  0.2952776  0.34971105 0.41146914 0.44979469 0.47254149]
     pass
