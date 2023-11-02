@@ -194,7 +194,7 @@ if __name__ == "__main__":
     # dataset.calculate_mean_std()
     # mean=[0.50729982] std=[0.41779612]
 
-    dataset = MVTecDRAEMTrainDatasetGray('/home/caoxiatian/data/xray/mvtec/cans1k', '/home/caoxiatian/data/dtd/images', mode='ms')
+    dataset = MVTecDRAEMTrainDatasetGray('/home/caoxiatian/data/xray/mvtec/g922_eggs1k', '/home/caoxiatian/data/dtd/images', mode='ms')
     dataset.calculate_mean_std()
     # cans
     # mean=[0.92999164 0.92114223 0.87338056 0.77245481 0.68129424 0.62310743 0.59162714 0.56702109] 

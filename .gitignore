@@ -20,3 +20,5 @@ deploy/zmicad/*
 !deploy/zmicad/*.h
 !deploy/zmicad/*.txt
 !deploy/zmicad/python
+
+!compression/*.ipynb

@@ -22,6 +22,6 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/)
 
 # 生成库文件
-add_library(zmicad STATIC  read_raw.cpp slice_manager.cpp channeled_norm.cpp pre_process.cpp post_process.cpp)
-# add_library(zmicad SHARED  read_raw.cpp slice_manager.cpp channeled_norm.cpp pre_process.cpp post_process.cpp)
-target_link_libraries(zmicad ${OpenCV_LIBRARIES})
+# add_library(zmicad STATIC  read_raw.cpp slice_manager.cpp channeled_norm.cpp pre_process.cpp post_process.cpp)
+add_library(zmicad SHARED  read_raw.cpp slice_manager.cpp channeled_norm.cpp pre_process.cpp post_process.cpp)
+# target_link_libraries(zmicad ${OpenCV_LIBRARIES})

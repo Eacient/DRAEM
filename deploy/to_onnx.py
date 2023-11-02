@@ -11,13 +11,17 @@ if __name__ == "__main__":
     parser.add_argument('--recon_path', action='store', type=str, required=True)
     parser.add_argument('--seg_path', action='store', type=str, required=True)
     parser.add_argument('--export_path', action='store', type=str, required=True)
+    parser.add_argument('--pack_path', action='store', type=str)
 
     args = parser.parse_args()
 
     recon_path = args.recon_path
     seg_path = args.seg_path
     model = DRAEMPack(args.input_channel)
-    model.load_checkpoint(recon_path, seg_path)
+    if args.pack_path:
+        model.load_pack_checkpoint(args.pack_path)
+    else:
+        model.load_checkpoint(recon_path, seg_path)
     model.eval()
 
     dynamic_axes_023 = {

@@ -113,6 +113,9 @@ def visualize_self_adaption(root_dir, pred_dir, gt_dict, pred_dict, metric_dict,
     os.makedirs(output_dir, exist_ok=True)
     img_paths = glob.glob(root_dir+'/ok/*.npy') + glob.glob(root_dir+'/ng/*.npy')
     compose_list = []
+    tot_preds = 0
+    tp_confidences = []
+    fp_confidences = []
     for img_path in img_paths:
         base_name = os.path.splitext(os.path.basename(img_path))[0]
 
@@ -121,7 +124,10 @@ def visualize_self_adaption(root_dir, pred_dir, gt_dict, pred_dict, metric_dict,
 
         img_gray = visualize_gray(np.load(img_path), vis_max)
         img_rgb = cv2.cvtColor(img_gray, cv2.COLOR_GRAY2RGB)
-        overlaid_image = img_rgb * 0.7 + heatmap * 0.3
+        if args.no_heatmap:
+            overlaid_image = img_rgb
+        else:
+            overlaid_image = img_rgb * 0.7 + heatmap * 0.3
 
         try:
             gt_boxes = gt_dict[base_name]
@@ -131,11 +137,15 @@ def visualize_self_adaption(root_dir, pred_dir, gt_dict, pred_dict, metric_dict,
         metrics = metric_dict[base_name]
         tp, fp, fn, tn, positive_thresh = metrics
         for box, confidence in zip(pred_boxes['bbox'], pred_boxes['confidence']):
+            tot_preds += 1
             x1, y1, x2, y2 = convert_saved_box(box, *score_map.shape)
             confidence_text = f"{confidence:.2f}"
             if confidence > positive_thresh:
                 cv2.putText(overlaid_image, confidence_text, (y1-25, x1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 1)
                 cv2.rectangle(overlaid_image, (y1, x1), (y2, x2), (0, 255, 0), 1)
+                tp_confidences.append(confidence)
+            else:
+                fp_confidences.append(confidence)
         for gt_box in gt_boxes:
             x1, y1, x2, y2 = convert_saved_box(gt_box, *score_map.shape)
             cv2.rectangle(overlaid_image, (y1, x1), (y2, x2), (255, 0, 0), 1)
@@ -146,6 +156,12 @@ def visualize_self_adaption(root_dir, pred_dir, gt_dict, pred_dict, metric_dict,
         cv2.imwrite(output_path, overlaid_image)
         if compose_output:
             compose_list.append(torch.tensor(overlaid_image).permute(2, 0, 1))
+
+    tp_confidences = np.array(tp_confidences)
+    fp_confidences = np.array(fp_confidences)
+    print(f'total preds: {tot_preds}')
+    print(f'true preds: {len(tp_confidences)}, mean={tp_confidences.mean()}, std={tp_confidences.std()}, max={tp_confidences.max()}, min={tp_confidences.min()}')
+    print(f'false preds: {len(fp_confidences)}, mean={fp_confidences.mean()}, std={fp_confidences.std()}, max={fp_confidences.max()}, min={fp_confidences.min()}')
     if compose_output:
         tensorlist = torch.stack(compose_list) / 255
         print(tensorlist.shape)
@@ -164,6 +180,7 @@ if __name__ == "__main__":
     parser.add_argument('--tp_mode', action='store', type=str, required=True)
     parser.add_argument('--tp_thresh', action='store', type=float, required=True)
     parser.add_argument('--vis_max', action='store', type=int, required=True)
+    parser.add_argument('--no_heatmap', action='store_true')
 
     args = parser.parse_args()
 

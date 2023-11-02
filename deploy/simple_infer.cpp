@@ -19,15 +19,12 @@
     } while (0) 
  
 using namespace nvinfer1; 
- 
 
-// const char* IN_NAME = "input"; 
-// const char* OUT_NAME = "output"; 
-const char* RAW_PATH = "test.raw";
+// const char* RAW_PATH = "test.raw";
 const char* MODE = "ms";
 static const std::vector<double> MEAN= {0.99310124, 0.9728329, 0.94237832, 0.90898088, 0.83903737, 0.74311205, 0.60096486, 0.50729982};
 static const std::vector<double> STDEV= {0.05002454, 0.1179261,  0.18425917, 0.24282377, 0.29716158, 0.34985626, 0.38834061, 0.41779612};
-static const double BIN_THRESH = 0.3;
+// static const double BIN_THRESH = 0.1;
 static const int IN_H = 640; 
 static const int IN_W = 640; 
 static const int IN_C = 8;
@@ -82,8 +79,19 @@ void doInference(IExecutionContext& context, float* input, float* output, int ba
     CHECK(cudaFree(buffers[1])); 
 }
 
-int main() 
+int main(int argc, char *argv[]) 
 {
+    if( argc == 3 ) {
+        std::cout << "The arguments supplied are \nraw_path:" << argv[1] << "\nbin_thresh:" << argv[2] << std::endl;
+    }
+    else if( argc > 3 ) {
+        std::cout << "Too many arguments supplied.\n";
+        return 1;
+    }
+    else {
+        printf("Two arguments expected.\n");
+        return 1;
+    }
 	sample::Logger gLogger;
 	// 1. 初始化TensorRT
     nvinfer1::IRuntime* runtime = nvinfer1::createInferRuntime(gLogger);
@@ -104,10 +112,8 @@ int main()
         return 1;
     }
 	assert(engine != nullptr);
-    std::cout << "input dimensions:" << std::endl;
-    show_dims(engine->getBindingDimensions(0));
-    std::cout << "output dimensions:" << std::endl;
-	show_dims(engine->getBindingDimensions(1));
+    std::cout << "input dimensions:";show_dims(engine->getBindingDimensions(0));
+    std::cout << "output dimensions:";show_dims(engine->getBindingDimensions(1));
 
 	// 3. 创建执行上下文
     nvinfer1::IExecutionContext* context = engine->createExecutionContext();
@@ -121,7 +127,7 @@ int main()
     SliceManager sliceManager = SliceManager(IN_H, 0.25, 65000);
 	// float* inputData = new float[BATCH_SIZE * IN_C * IN_H * IN_W];
     // 4.1. 读取raw -> Mat 单通道65000
-    cv::Mat raw = readRawImage(RAW_PATH, false);
+    cv::Mat raw = readRawImage(argv[1], false);
     // 4.2. slice -> Mat -> vector <Mat> 65000
     int padded_h, padded_w;
     cv::Rect orig_box;
@@ -157,10 +163,10 @@ int main()
     // 4.7. merge -> Mat
     cv::Mat mergedProb = sliceManager.merged_crop(outputMats, padded_h, padded_w, orig_box, n_slice_h, n_slice_w);
     // 4.8. post process -> VixProb
-    std::vector<VIXProb> vixOutput = postProcess(mergedProb, BIN_THRESH);
+    std::vector<VIXProb> vixOutput = postProcess(mergedProb, atof(argv[2]));
 
     for (const auto& box : vixOutput) {
-        std::cout << "Positive Bounding Box: (" << box.x1 << ", " << box.x2 << ", " << box.x3 << ", " << box.x4 << " " << box.prob << ")\n";
+        std::cout << "(" << box.x1 << ", " << box.x2 << ", " << box.x3 << ", " << box.x4 << ", " << box.prob << "),\n";
     }
 
     // 5. 释放资源

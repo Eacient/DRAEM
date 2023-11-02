@@ -59,8 +59,8 @@ std::vector<VIXProb> postProcess(const cv::Mat& output_map, double bin_thresh = 
         vixProbs[i].prob = confidence;
         vixProbs[i].x1 = left;
         vixProbs[i].x2 = top;
-        vixProbs[i].x3 = left + width;
-        vixProbs[i].x4 = top + height;
+        vixProbs[i].x3 = width;
+        vixProbs[i].x4 = height;
     }
     return vixProbs;
 }
