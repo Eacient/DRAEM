@@ -10,16 +10,19 @@ sys.path.append(file_path.parent.parent.parent)
 from test_data_loader import DRAEMTestDatasetGray
 from model_pack import DRAEMPack
 
-def output_scoremap(test_root_dir, mode, mean, std, recon_path, seg_path, pack_path, output_dir='./test_output'):
+def output_scoremap(test_root_dir, mode, mean, std, recon_path, seg_path, pack_path, mod_path, output_dir='./test_output'):
     assert mode in ['single', 'ms', 'sw']
     dataset = DRAEMTestDatasetGray(test_root_dir, mode, mean, std)
     in_channels = dataset[0]['image'].shape[0]
-    model = DRAEMPack(in_channels)
 
-    if pack_path is not None:
-        model.load_pack_checkpoint(pack_path)
+    if mod_path is not None:
+        model = torch.load(mod_path, map_location='cpu')
     else:
-        model.load_checkpoint(recon_path, seg_path)
+        model = DRAEMPack(in_channels)
+        if pack_path is not None:
+            model.load_pack_checkpoint(pack_path)
+        else:
+            model.load_checkpoint(recon_path, seg_path)
     model = model.cuda()
     model.eval()
 
@@ -50,7 +53,8 @@ if __name__ == "__main__":
     parser.add_argument('--seg_path', action='store', type=str, required=True)
     parser.add_argument('--pred_dir', action='store', type=str, required=True)
     parser.add_argument('--pack_path', action='store', type=str, required=False)
+    parser.add_argument('--mod_path', action='store', type=str, required=False)
 
     args = parser.parse_args()
     with torch.cuda.device(args.gpu_id):
-        output_scoremap(args.test_root_dir, args.mode, args.mean, args.std, args.recon_path, args.seg_path, args.pack_path, os.path.join(args.pred_dir, 'score_maps'))
+        output_scoremap(args.test_root_dir, args.mode, args.mean, args.std, args.recon_path, args.seg_path, args.pack_path, args.mod_path, os.path.join(args.pred_dir, 'score_maps'))

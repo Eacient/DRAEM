@@ -1,5 +1,5 @@
-ONNX_PATH=/home/caoxiatian/DRAEM/deploy/bubbles.onnx
-ENGINE_PATH=/home/caoxiatian/DRAEM/deploy/bubbles.engine
+ONNX_PATH=/home/caoxiatian/DRAEM/deploy/compressed_bubbles_50.onnx
+ENGINE_PATH=/home/caoxiatian/DRAEM/deploy/compressed_bubbles_50.engine
 /home/caoxiatian/.basis/TensorRT-8.6.1.6/bin/trtexec \
     --skipInference \
     --minShapes=input:1x8x256x256 \

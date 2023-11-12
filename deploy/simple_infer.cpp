@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 
 	// 2. 从引擎文件中加载TensorRT引擎
     nvinfer1::ICudaEngine* engine = nullptr;
-    std::ifstream engineFile("bubbles.engine", std::ios::binary);
+    std::ifstream engineFile("compressed_bubbles_50.engine", std::ios::binary);
     if (engineFile.good()) {
         engineFile.seekg(0, engineFile.end);
         size_t fileSize = engineFile.tellg();

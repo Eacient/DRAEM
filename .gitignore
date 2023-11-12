@@ -22,3 +22,4 @@ deploy/zmicad/*
 !deploy/zmicad/python
 
 !compression/*.ipynb
+*.mod
